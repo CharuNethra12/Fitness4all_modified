@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 
 class TColor {
   // Use full 8-digit hex values (including alpha channel)
-  static Color get primary => const Color(0xFF3399FF); // Blue
+  static Color get primary => const Color(0xFF3399FF);
+  static Color get secondary => const Color(0xFF3399FF);
+
+  // Blue
   static Color get primaryText => const Color(0xff0C0B0B); // Black
+  static Color get secondaryText => const Color(0xff2C3E50);
   static Color get btnprimaryText => const Color(0xff0D0C0C); // Black
   static Color get btnSecondaryText => const Color(0xff241111); // Black
 
