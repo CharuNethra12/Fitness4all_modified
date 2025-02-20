@@ -22,19 +22,19 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
       "image": "assets/img/excerise.png"
     },
     {
-      "title": "Logger",
+      "title": "Exercise Logger",
       "subtitle": "log your activities each time !!",
-      "image": "assets/img/ex_3.png"
+      "image": "assets/img/excerise_logger.jpg"
     },
     {
       "title": "Track your progress",
       "subtitle": "Check your progess whenever and wherever",
-      "image": "assets/img/ex_4.png"
+      "image": "assets/img/excerise_tracker.jpg"
     },
     {
       "title": "Get Personalized Suggestions",
       "subtitle": "We monitor your activites to give you the best insights possible",
-      "image": "assets/img/ex_5.png"
+      "image": "assets/img/personalised_suggestions.jpg"
     }
   ];
 
