@@ -155,6 +155,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.16.0"
+  otp_text_field_v2:
+    dependency: "direct main"
+    description:
+      name: otp_text_field_v2
+      sha256: "78298aa62fdbd5efdcbf4fb4aa3b1f452d7f225fd6efb85f46b20705aff0b93e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.3"
+  otp_timer_button:
+    dependency: "direct main"
+    description:
+      name: otp_timer_button
+      sha256: "2c1dae65db0147add42f52558f88ad71a4a29a612d891e81323ea01bac983dcf"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   path:
     dependency: transitive
     description:
