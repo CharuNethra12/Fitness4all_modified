@@ -1,6 +1,7 @@
 import 'package:fitness4all/common/color_extensions.dart';
 import 'package:fitness4all/common_widgets/round_button.dart';
 import 'package:fitness4all/common_widgets/round_title_value_button.dart';
+import 'package:fitness4all/screen/home/Main_home/home_screen.dart';
 import 'package:fitness4all/screen/home/top_tab_view/top_tab_view_screen.dart';
 import 'package:fitness4all/screen/login/select_age_screen.dart';
 import 'package:fitness4all/screen/login/select_height_screen.dart';
@@ -116,7 +117,7 @@ class _PhysiqueScreenState extends State<PhysiqueScreen> {
               ),
 
               RoundButton(title: "Confirm Detail", isPadding: false, onPressed: (){
-                context.push(const TopTabViewScreen() );
+                context.push( HomeScreen() );
               })
             ],
           ),
