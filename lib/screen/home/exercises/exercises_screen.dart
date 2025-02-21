@@ -2,14 +2,14 @@ import 'package:fitness4all/common/color_extensions.dart';
 import 'package:fitness4all/screen/home/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 
-class MealsScreen extends StatefulWidget {
-  const MealsScreen({super.key});
+class ExerciseScreen extends StatefulWidget {
+  const ExerciseScreen({super.key});
 
   @override
-  State<MealsScreen> createState() => _MealsScreenState();
+  State<ExerciseScreen> createState() => _ExerciseScreenState();
 }
 
-class _MealsScreenState extends State<MealsScreen> {
+class _ExerciseScreenState extends State<ExerciseScreen> {
   int _selectedIndex = 0;
   final TextEditingController _mealController = TextEditingController();
   final TextEditingController _caloriesController = TextEditingController();
@@ -20,7 +20,7 @@ class _MealsScreenState extends State<MealsScreen> {
   int _calories = 0;
   int _calorieLimit = 2000;
   int _waterIntake = 0;
-  final List<Map<String, dynamic>> _savedMeals = [];
+  final List<Map<String, dynamic>> _savedExercise = [];
   final List<String> _waterLogs = [];
   final List<String> _mealRecommendations = [
     "🥗 Salad with Grilled Chicken",
@@ -146,7 +146,7 @@ class _MealsScreenState extends State<MealsScreen> {
                   setState(() {
                     int mealCalories = int.parse(_caloriesController.text);
                     _calories += mealCalories; // Update total calories
-                    _savedMeals.add({
+                    _savedExercise.add({
                       "name": _mealController.text,
                       "category": _selectedCategory,
                       "calories": mealCalories,
@@ -165,11 +165,11 @@ class _MealsScreenState extends State<MealsScreen> {
               child: const Text("Save Meal"),
             ),
             const SizedBox(height: 20),
-            _savedMeals.isNotEmpty
+            _savedExercise.isNotEmpty
                 ? Expanded(
               child: ListView.builder(
-                itemCount: _savedMeals.length,
-                itemBuilder: (context, index) => _mealCard(_savedMeals[index]),
+                itemCount: _savedExercise.length,
+                itemBuilder: (context, index) => _mealCard(_savedExercise[index]),
               ),
             )
                 : const Text("No meals saved yet."),
@@ -450,7 +450,7 @@ class CustomBottomNavBar extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildNavItem(Icons.restaurant, "Meals", 0, Colors.green),
+            _buildNavItem(Icons.restaurant, "Exercise", 0, Colors.green),
             _buildNavItem(Icons.settings, "Limits", 1, Colors.orange),
             _buildNavItem(Icons.local_drink, "Water", 2, Colors.blue),
             _buildNavItem(Icons.track_changes, "Calories", 3, Colors.red),
