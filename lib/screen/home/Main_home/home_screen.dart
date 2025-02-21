@@ -1,6 +1,8 @@
 import 'package:fitness4all/common/color_extensions.dart';
 import 'package:fitness4all/screen/home/Main_home/line_chart.dart';
 import 'package:fitness4all/screen/home/Meals/meals_screen.dart';
+import 'package:fitness4all/screen/home/exercises/exercises_screen.dart';
+import 'package:fitness4all/screen/home/goals/main_goal_page.dart';
 import 'package:fitness4all/screen/home/settings/profile_screen.dart';
 import 'package:fitness4all/screen/home/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     "Fitness and\nHealth Goals",
                         () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ProfileScreen()),
+                      MaterialPageRoute(builder: (context) =>const MyApp()),
                     ),
                   ),
                   _buildCategoryItem(
@@ -75,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     "Exercise and\nActivity Tracking",
                         () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => MealsScreen()),
+                      MaterialPageRoute(builder: (context) => const ExerciseScreen()),
                     ),
                   ),
                   _buildCategoryItem(
@@ -84,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     "Nutrition and\nDiet Management",
                         () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => MealsScreen()),
+                      MaterialPageRoute(builder: (context) => const MealsScreen()),
                     ),
                   ),
                   _buildCategoryItem(
@@ -93,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     "Personalized\nInsights and Recommendations",
                         () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ProfileScreen()),
+                      MaterialPageRoute(builder: (context) => const ProfileScreen()),
                     ),
                   ),
                 ],
