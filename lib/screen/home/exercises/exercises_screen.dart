@@ -11,23 +11,24 @@ class ExerciseScreen extends StatefulWidget {
 
 class _ExerciseScreenState extends State<ExerciseScreen> {
   int _selectedIndex = 0;
-  final TextEditingController _mealController = TextEditingController();
+  final TextEditingController _exerciseController = TextEditingController();
   final TextEditingController _caloriesController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
-  final TextEditingController _waterController = TextEditingController();
-  final TextEditingController _calorieLimitController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
 
-  int _calories = 0;
-  int _calorieLimit = 2000;
-  int _waterIntake = 0;
-  final List<Map<String, dynamic>> _savedExercise = [];
-  final List<String> _waterLogs = [];
-  final List<String> _mealRecommendations = [
-    "🥗 Salad with Grilled Chicken",
-    "🍳 Scrambled Eggs with Avocado Toast",
-    "🍲 Lentil Soup with Whole Grain Bread",
-    "🥑 Greek Yogurt with Berries & Nuts",
-    "🥜 Peanut Butter Banana Smoothie"
+  // Local variables to store exercise data
+  int _totalCaloriesBurned = 0;
+  int _totalTimeSpent = 0; // Time spent in minutes
+  final List<Map<String, dynamic>> _savedExercises = [];
+  final List<String> _exerciseRecommendations = [
+    "🏋️‍♂️ Weightlifting",
+    "🏃‍♂️ Running",
+    "🚴‍♂️ Cycling",
+    "🧘‍♀️ Yoga",
+    "🏊‍♂️ Swimming",
+    "🤸‍♀️ Pilates",
+    "🥊 Boxing",
+    "🤼‍♂️ Wrestling"
   ];
 
   final Map<int, Color> _pageColors = {
@@ -37,40 +38,36 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     3: Colors.red,
     4: Colors.purple,
     5: Colors.teal,
-    6: Colors.indigo,  // Meal Templates
-    7: Colors.brown,   // Daily Meal Plan
-    8: Colors.amber,   // Healthy Snack Options
-    9: Colors.pink,    // Nutritional Comparisons
-    10: Colors.cyan,   // Micronutrient Deficiencies
   };
 
-  final List<String> _mealCategories = ["Breakfast", "Lunch", "Dinner", "Snack"];
-  String _selectedCategory = "Lunch";
+  final List<String> _exerciseCategories = ["Cardio", "Strength", "Flexibility", "Endurance"];
+  String _selectedCategory = "Cardio";
 
   void _showSnackBar(String message, {Color color = Colors.green}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
         backgroundColor: color,
-        duration: const Duration(seconds: 3), // Increased duration
+        duration: const Duration(seconds: 3),
       ),
     );
   }
 
-  Widget _mealCard(Map<String, dynamic> meal) {
+  Widget _exerciseCard(Map<String, dynamic> exercise) {
     return Card(
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
-        leading: const Icon(Icons.fastfood, size: 40, color: Colors.green),
-        title: Text(meal["name"], style: const TextStyle(fontWeight: FontWeight.bold)),
+        leading: const Icon(Icons.fitness_center, size: 40, color: Colors.green),
+        title: Text(exercise["name"], style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("🍽 Category: ${meal["category"]}"),
-            Text("🔥 ${meal["calories"]} kcal"),
-            if (meal["notes"].isNotEmpty) Text("📝 Notes: ${meal["notes"]}"),
-            Text("📅 ${meal["date"].toString().split('.')[0]}"),
+            Text("🏋️‍♂️ Category: ${exercise["category"]}"),
+            Text("🔥 ${exercise["calories"]} kcal burned"),
+            if (exercise["notes"].isNotEmpty) Text("📝 Notes: ${exercise["notes"]}"),
+            Text("⏱ Time Spent: ${exercise["time"]} minutes"),
+            Text("📅 ${exercise["date"].toString().split('.')[0]}"),
           ],
         ),
       ),
@@ -117,16 +114,16 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
     _bottomNavScrollController = ScrollController();
     _pages = [
       _buildPage(
-        "Add Meal",
-        Icons.restaurant,
-        "Add your meals and track nutrients.",
+        "Add Exercise",
+        Icons.fitness_center,
+        "Log your exercises and track calories burned.",
         Column(
           children: [
-            TextField(controller: _mealController, decoration: const InputDecoration(labelText: "Enter meal name")),
+            TextField(controller: _exerciseController, decoration: const InputDecoration(labelText: "Enter exercise name")),
             const SizedBox(height: 10),
             DropdownButton<String>(
               value: _selectedCategory,
-              items: _mealCategories.map((String category) {
+              items: _exerciseCategories.map((String category) {
                 return DropdownMenuItem(value: category, child: Text(category));
               }).toList(),
               onChanged: (value) {
@@ -136,223 +133,142 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
               },
             ),
             const SizedBox(height: 10),
-            TextField(controller: _caloriesController, decoration: const InputDecoration(labelText: "Enter calories"), keyboardType: TextInputType.number),
+            TextField(controller: _caloriesController, decoration: const InputDecoration(labelText: "Enter calories burned"), keyboardType: TextInputType.number),
+            const SizedBox(height: 10),
+            TextField(controller: _timeController, decoration: const InputDecoration(labelText: "Enter time spent (minutes)"), keyboardType: TextInputType.number),
             const SizedBox(height: 10),
             TextField(controller: _notesController, decoration: const InputDecoration(labelText: "Add notes (optional)")),
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
-                if (_mealController.text.isNotEmpty && _caloriesController.text.isNotEmpty) {
+                if (_exerciseController.text.isNotEmpty && _caloriesController.text.isNotEmpty && _timeController.text.isNotEmpty) {
                   setState(() {
-                    int mealCalories = int.parse(_caloriesController.text);
-                    _calories += mealCalories; // Update total calories
-                    _savedExercise.add({
-                      "name": _mealController.text,
+                    int exerciseCalories = int.parse(_caloriesController.text);
+                    int exerciseTime = int.parse(_timeController.text);
+                    _totalCaloriesBurned += exerciseCalories;
+                    _totalTimeSpent += exerciseTime;
+                    _savedExercises.add({
+                      "name": _exerciseController.text,
                       "category": _selectedCategory,
-                      "calories": mealCalories,
+                      "calories": exerciseCalories,
+                      "time": exerciseTime,
                       "notes": _notesController.text,
                       "date": DateTime.now(),
                     });
-                    _mealController.clear();
+                    _exerciseController.clear();
                     _caloriesController.clear();
+                    _timeController.clear();
                     _notesController.clear();
                   });
-                  _showSnackBar("Meal added successfully!");
+                  _showSnackBar("Exercise logged successfully!");
                 } else {
                   _showSnackBar("Please fill in all fields.", color: Colors.red);
                 }
               },
-              child: const Text("Save Meal"),
+              child: const Text("Log Exercise"),
             ),
             const SizedBox(height: 20),
-            _savedExercise.isNotEmpty
+            _savedExercises.isNotEmpty
                 ? Expanded(
               child: ListView.builder(
-                itemCount: _savedExercise.length,
-                itemBuilder: (context, index) => _mealCard(_savedExercise[index]),
+                itemCount: _savedExercises.length,
+                itemBuilder: (context, index) => _exerciseCard(_savedExercises[index]),
               ),
             )
-                : const Text("No meals saved yet."),
+                : const Text("No exercises logged yet."),
           ],
         ),
         _pageColors[0]!,
       ),
       _buildPage(
-        "Set Calorie Limit",
-        Icons.settings,
-        "Manage your daily calorie goals.",
+        "Time to Calories",
+        Icons.timer,
+        "Track calories burned based on time spent.",
         Column(
           children: [
-            Text("📏 Current Calorie Limit: $_calorieLimit kcal", style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 10),
-            TextField(controller: _calorieLimitController, decoration: const InputDecoration(labelText: "Enter new limit"), keyboardType: TextInputType.number),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                if (_calorieLimitController.text.isNotEmpty) {
-                  setState(() {
-                    _calorieLimit = int.parse(_calorieLimitController.text);
-                    _calorieLimitController.clear();
-                  });
-                  _showSnackBar("Calorie limit set successfully!");
-                } else {
-                  _showSnackBar("Please enter a valid limit.", color: Colors.red);
-                }
-              },
-              child: const Text("Update Limit"),
-            ),
-          ],
-        ),
-        _pageColors[3]!,
-      ),
-      _buildPage(
-        "Water Intake",
-        Icons.local_drink,
-        "Track your daily water intake.",
-        Column(
-          children: [
-            Text("💧 Total Water Intake: $_waterIntake ml", style: const TextStyle(fontSize: 18)),
-            const SizedBox(height: 10),
-            TextField(controller: _waterController, decoration: const InputDecoration(labelText: "Enter water intake (ml)"), keyboardType: TextInputType.number),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                if (_waterController.text.isNotEmpty) {
-                  setState(() {
-                    _waterIntake += int.parse(_waterController.text);
-                    _waterLogs.add("${_waterController.text} ml at ${DateTime.now()}");
-                    _waterController.clear();
-                  });
-                  _showSnackBar("Water intake added successfully!");
-                } else {
-                  _showSnackBar("Please enter a valid amount.", color: Colors.red);
-                }
-              },
-              child: const Text("Add Water Intake"),
-            ),
-            const SizedBox(height: 20),
-            if (_waterLogs.isNotEmpty)
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _waterLogs.length,
-                  itemBuilder: (context, index) => ListTile(title: Text(_waterLogs[index])),
-                ),
-              )
-            else
-              const Text("No water intake logged yet."),
-          ],
-        ),
-        _pageColors[2]!,
-      ),
-      _buildPage(
-        "Meal & Snack Recommendations",
-        Icons.recommend,
-        "Get personalized meal suggestions.",
-        Column(
-          children: _mealRecommendations.map((meal) => Text(meal, style: const TextStyle(fontSize: 16))).toList(),
-        ),
-        _pageColors[4]!,
-      ),
-      _buildPage(
-        "Calorie Tracker",
-        Icons.track_changes,
-        "Track your total calorie intake.",
-        Column(
-          children: [
-            Text("🔥 Total Calories Consumed: $_calories kcal", style: const TextStyle(fontSize: 18)),
+            Text("🔥 Total Calories Burned: $_totalCaloriesBurned kcal", style: const TextStyle(fontSize: 18)),
+            Text("⏱ Total Time Spent: $_totalTimeSpent minutes", style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
                 setState(() {
-                  _calories = 0; // Reset calories if needed
+                  _totalCaloriesBurned = 0;
+                  _totalTimeSpent = 0;
                 });
-                _showSnackBar("Calories reset!", color: Colors.red);
+                _showSnackBar("Calories and time reset!", color: Colors.red);
               },
-              child: const Text("Reset Calories"),
+              child: const Text("Reset Data"),
             ),
-          ],
-        ),
-        _pageColors[5]!,
-      ),
-      _buildPage(
-        "Nutrient Breakdown",
-        Icons.info,
-        "View breakdown of nutrients.",
-        Column(
-          children: [
-            Text("Carbs: 250g", style: const TextStyle(fontSize: 16)),
-            Text("Proteins: 150g", style: const TextStyle(fontSize: 16)),
-            Text("Fats: 70g", style: const TextStyle(fontSize: 16)),
           ],
         ),
         _pageColors[1]!,
       ),
       _buildPage(
-        "Meal Templates",
-        Icons.save,
-        "Save your favorite meals as templates.",
+        "Exercise Recommendations",
+        Icons.recommend,
+        "Get personalized exercise suggestions.",
         Column(
-          children: [
-            Text("1. Chicken Stir Fry", style: const TextStyle(fontSize: 16)),
-            Text("2. Veggie Wrap", style: const TextStyle(fontSize: 16)),
-            Text("3. Smoothie Bowl", style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 10),
-            ElevatedButton(onPressed: () {}, child: const Text("Save Current Meal as Template")),
-          ],
+          children: _exerciseRecommendations.map((exercise) => Text(exercise, style: const TextStyle(fontSize: 16))).toList(),
         ),
         _pageColors[2]!,
       ),
       _buildPage(
-        "Daily Meal Plan",
-        Icons.calendar_today,
-        "View and customize your daily meal plan.",
+        "Time Setter",
+        Icons.timer,
+        "Set and log your exercise time frame.",
         Column(
           children: [
-            Text("Breakfast: Oatmeal with Fruits", style: const TextStyle(fontSize: 16)),
-            Text("Lunch: Grilled Chicken Salad", style: const TextStyle(fontSize: 16)),
-            Text("Dinner: Quinoa and Vegetables", style: const TextStyle(fontSize: 16)),
+            Text("⏱ Total Time Spent: $_totalTimeSpent minutes", style: const TextStyle(fontSize: 18)),
             const SizedBox(height: 10),
-            ElevatedButton(onPressed: () {}, child: const Text("Customize Meal Plan")),
+            TextField(controller: _timeController, decoration: const InputDecoration(labelText: "Enter time spent (minutes)"), keyboardType: TextInputType.number),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                if (_timeController.text.isNotEmpty) {
+                  setState(() {
+                    _totalTimeSpent += int.parse(_timeController.text);
+                    _timeController.clear();
+                  });
+                  _showSnackBar("Time logged successfully!");
+                } else {
+                  _showSnackBar("Please enter a valid time.", color: Colors.red);
+                }
+              },
+              child: const Text("Log Time"),
+            ),
           ],
         ),
         _pageColors[3]!,
       ),
       _buildPage(
-        "Healthy Snack Options",
-        Icons.local_pizza,
-        "Get healthier snack recommendations.",
+        "Exercise Templates",
+        Icons.save,
+        "Save your favorite exercises as templates.",
         Column(
           children: [
-            Text("1. Greek Yogurt with Honey", style: const TextStyle(fontSize: 16)),
-            Text("2. Hummus with Veggies", style: const TextStyle(fontSize: 16)),
-            Text("3. Mixed Nuts", style: const TextStyle(fontSize: 16)),
+            Text("1. Push-ups", style: const TextStyle(fontSize: 16)),
+            Text("2. Squats", style: const TextStyle(fontSize: 16)),
+            Text("3. Plank", style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 10),
+            ElevatedButton(onPressed: () {}, child: const Text("Save Current Exercise as Template")),
           ],
         ),
         _pageColors[4]!,
       ),
       _buildPage(
-        "Nutritional Comparisons",
-        Icons.compare_arrows,
-        "Compare nutritional values of foods.",
+        "Daily Exercise Plan",
+        Icons.calendar_today,
+        "View and customize your daily exercise plan.",
         Column(
           children: [
-            Text("Chips: 150 kcal, 10g fat", style: const TextStyle(fontSize: 16)),
-            Text("Veggie Sticks: 50 kcal, 0g fat", style: const TextStyle(fontSize: 16)),
+            Text("Morning: Jogging", style: const TextStyle(fontSize: 16)),
+            Text("Afternoon: Weightlifting", style: const TextStyle(fontSize: 16)),
+            Text("Evening: Yoga", style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 10),
+            ElevatedButton(onPressed: () {}, child: const Text("Customize Plan")),
           ],
         ),
         _pageColors[5]!,
-      ),
-      _buildPage(
-        "Micronutrient Deficiencies",
-        Icons.warning,
-        "Highlight deficiencies and suggest adjustments.",
-        Column(
-          children: [
-            Text("Deficiency in Vitamin D:", style: const TextStyle(fontSize: 16)),
-            Text("Consider adding more fatty fish or fortified foods.", style: const TextStyle(fontSize: 16)),
-          ],
-        ),
-        _pageColors[1]!,
       ),
     ];
   }
@@ -365,9 +281,8 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
-      // Scroll the bottom navigation bar to the selected index
       _bottomNavScrollController.animateTo(
-        index * 80.0, // Adjust this value based on your item width
+        index * 80.0,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
@@ -376,11 +291,10 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
 
   @override
   void dispose() {
-    _mealController.dispose();
+    _exerciseController.dispose();
     _caloriesController.dispose();
     _notesController.dispose();
-    _waterController.dispose();
-    _calorieLimitController.dispose();
+    _timeController.dispose();
     _pageController.dispose();
     _bottomNavScrollController.dispose();
     super.dispose();
@@ -390,14 +304,13 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Nutrition & Meal Tracker"),
-        backgroundColor: _pageColors[_selectedIndex] ?? Colors.blue, // Ensure a default color
+        title: const Text("Exercise Tracker"),
+        backgroundColor: _pageColors[_selectedIndex] ?? Colors.blue,
         centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
-              // Add your settings functionality here
               context.push(const SettingScreen());
             },
           ),
@@ -408,9 +321,8 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
         onPageChanged: (index) {
           setState(() {
             _selectedIndex = index;
-            // Scroll the bottom navigation bar to the selected index
             _bottomNavScrollController.animateTo(
-              index * 80.0, // Adjust this value based on your item width
+              index * 80.0,
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
             );
@@ -442,25 +354,20 @@ class CustomBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80, // Increased height for the bottom navigation bar
-      color: Colors.white, // Set the background color to white
+      height: 80,
+      color: Colors.white,
       child: SingleChildScrollView(
         controller: scrollController,
         scrollDirection: Axis.horizontal,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildNavItem(Icons.restaurant, "Exercise", 0, Colors.green),
-            _buildNavItem(Icons.settings, "Limits", 1, Colors.orange),
-            _buildNavItem(Icons.local_drink, "Water", 2, Colors.blue),
-            _buildNavItem(Icons.track_changes, "Calories", 3, Colors.red),
-            _buildNavItem(Icons.recommend, "Suggestions", 4, Colors.purple),
-            _buildNavItem(Icons.info, "Nutrients", 5, Colors.teal),
-            _buildNavItem(Icons.save, "Templates", 6, Colors.indigo), // Meal Templates
-            _buildNavItem(Icons.calendar_today, "Meal Plan", 7, Colors.brown), // Daily Meal Plan
-            _buildNavItem(Icons.local_pizza, "Snacks", 8, Colors.amber), // Healthy Snack Options
-            _buildNavItem(Icons.compare_arrows, "Compare", 9, Colors.pink), // Nutritional Comparisons
-            _buildNavItem(Icons.warning, "Deficiencies", 10, Colors.cyan), // Micronutrient Deficiencies
+            _buildNavItem(Icons.fitness_center, "Exercise", 0, Colors.green),
+            _buildNavItem(Icons.timer, "Time to Calories", 1, Colors.orange),
+            _buildNavItem(Icons.recommend, "Suggestions", 2, Colors.blue),
+            _buildNavItem(Icons.timer, "Time Setter", 3, Colors.red),
+            _buildNavItem(Icons.save, "Templates", 4, Colors.purple),
+            _buildNavItem(Icons.calendar_today, "Daily Plan", 5, Colors.teal),
           ],
         ),
       ),
@@ -471,7 +378,7 @@ class CustomBottomNavBar extends StatelessWidget {
     return GestureDetector(
       onTap: () => onItemTapped(index),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10), // Increased vertical padding
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -487,7 +394,7 @@ class CustomBottomNavBar extends StatelessWidget {
               ),
               child: Icon(
                 icon,
-                size: 30, // Increased icon size
+                size: 30,
                 color: selectedIndex == index ? Colors.white : color,
               ),
             ),
@@ -495,7 +402,7 @@ class CustomBottomNavBar extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                fontSize: 14, // Increased font size
+                fontSize: 14,
                 color: selectedIndex == index ? Colors.black : Colors.grey,
               ),
             ),

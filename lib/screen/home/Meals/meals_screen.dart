@@ -453,8 +453,8 @@ class CustomBottomNavBar extends StatelessWidget {
             _buildNavItem(Icons.restaurant, "Meals", 0, Colors.green),
             _buildNavItem(Icons.settings, "Limits", 1, Colors.orange),
             _buildNavItem(Icons.local_drink, "Water", 2, Colors.blue),
-            _buildNavItem(Icons.track_changes, "Calories", 3, Colors.red),
-            _buildNavItem(Icons.recommend, "Suggestions", 4, Colors.purple),
+            _buildNavItem(Icons.recommend, "Suggestions", 3, Colors.red),
+            _buildNavItem(Icons.track_changes, "Calories", 4, Colors.purple),
             _buildNavItem(Icons.info, "Nutrients", 5, Colors.teal),
             _buildNavItem(Icons.save, "Templates", 6, Colors.indigo), // Meal Templates
             _buildNavItem(Icons.calendar_today, "Meal Plan", 7, Colors.brown), // Daily Meal Plan

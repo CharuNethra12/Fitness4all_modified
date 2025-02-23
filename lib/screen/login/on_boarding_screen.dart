@@ -1,5 +1,6 @@
 import 'package:fitness4all/common/color_extensions.dart';
 import 'package:fitness4all/common_widgets/round_button.dart';
+import 'package:fitness4all/screen/home/Main_home/home_screen.dart';
 import 'package:fitness4all/screen/home/settings/settings_screen.dart';
 import 'package:fitness4all/screen/login/sign_up_screen.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +65,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 fontWeight: FontWeight.w300,
                 type: RoundButtonType.line,
                 onPressed: () {
-                  context.push(const SettingScreen());
+                  context.push( HomeScreen());
                 }),
           )
         ],
