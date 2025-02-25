@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 void main() {
   runApp(const MyApp());
 }
-
+// goals landing page
+//nav bar
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -180,8 +181,47 @@ class HomeLandingPage extends StatelessWidget {
 }
 
 // Feature Pages
-class GoalSettingPage extends StatelessWidget {
+class GoalSettingPage extends StatefulWidget {
   const GoalSettingPage({super.key});
+
+  @override
+  _GoalSettingPageState createState() => _GoalSettingPageState();
+}
+
+class _GoalSettingPageState extends State<GoalSettingPage> {
+  String dailyGoal = "Not set";
+  String weeklyGoal = "Not set";
+
+  void _setGoal(String type) {
+    TextEditingController controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Enter $type Goal"),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(hintText: "Enter goal"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  if (type == "Daily") {
+                    dailyGoal = controller.text;
+                  } else if (type == "Weekly") {
+                    weeklyGoal = controller.text;
+                  }
+                });
+                Navigator.pop(context);
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -191,34 +231,52 @@ class GoalSettingPage extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            buildGoalOption(context, "Set goal for today", Icons.today, Colors.orange),
-            buildGoalOption(context, "Set goal for this week", Icons.calendar_view_week, Colors.green),
-            buildGoalOption(context, "Set goal for this month", Icons.calendar_today, Colors.blue),
+            ListTile(
+              title: const Text("Daily Goal"),
+              subtitle: Text(dailyGoal),
+              trailing: IconButton(
+                icon: const Icon(Icons.edit, color: Colors.orange),
+                onPressed: () => _setGoal("Daily"),
+              ),
+            ),
+            ListTile(
+              title: const Text("Weekly Goal"),
+              subtitle: Text(weeklyGoal),
+              trailing: IconButton(
+                icon: const Icon(Icons.edit, color: Colors.green),
+                onPressed: () => _setGoal("Weekly"),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
-
-  Widget buildGoalOption(BuildContext context, String title, IconData icon, Color color) {
-    return Card(
-      elevation: 5,
-      margin: const EdgeInsets.only(bottom: 15),
-      child: ListTile(
-        leading: Icon(icon, color: color),
-        title: Text(title, style: const TextStyle(fontSize: 18)),
-        onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("$title clicked!")),
-          );
-        },
-      ),
-    );
-  }
 }
 
-class SpecificGoalSettingPage extends StatelessWidget {
+class SpecificGoalSettingPage extends StatefulWidget {
   const SpecificGoalSettingPage({super.key});
+
+  @override
+  _SpecificGoalSettingPageState createState() => _SpecificGoalSettingPageState();
+}
+
+class _SpecificGoalSettingPageState extends State<SpecificGoalSettingPage> {
+  final TextEditingController _weightController = TextEditingController();
+  final TextEditingController _calorieController = TextEditingController();
+  final TextEditingController _sleepController = TextEditingController();
+
+  static String? savedWeight;
+  static String? savedCalories;
+  static String? savedSleep;
+
+  void saveGoals() {
+    setState(() {
+      savedWeight = _weightController.text;
+      savedCalories = _calorieController.text;
+      savedSleep = _sleepController.text;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -227,35 +285,73 @@ class SpecificGoalSettingPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildGoalOption(context, "Set Weight Goal", Icons.monitor_weight, Colors.red),
-            buildGoalOption(context, "Set Sleep Goal", Icons.bedtime, Colors.blue),
-            buildGoalOption(context, "Set Calorie Goal", Icons.local_fire_department, Colors.green),
+            const Text("Enter Your Goals", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _weightController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: "Weight (kg)", border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _calorieController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: "Daily Calorie Intake", border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _sleepController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: "Sleep Hours", border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: saveGoals,
+              child: const Text("Save Goals"),
+            ),
+            const SizedBox(height: 20),
+            if (savedWeight != null || savedCalories != null || savedSleep != null) ...[
+              const Text("Saved Goals:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              if (savedWeight != null) Text("Weight: $savedWeight kg"),
+              if (savedCalories != null) Text("Calories: $savedCalories kcal"),
+              if (savedSleep != null) Text("Sleep: $savedSleep hours"),
+            ],
           ],
         ),
       ),
     );
   }
-
-  Widget buildGoalOption(BuildContext context, String title, IconData icon, Color color) {
-    return Card(
-      elevation: 5,
-      margin: const EdgeInsets.only(bottom: 15),
-      child: ListTile(
-        leading: Icon(icon, color: color),
-        title: Text(title, style: const TextStyle(fontSize: 18)),
-        onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("$title clicked!")),
-          );
-        },
-      ),
-    );
-  }
 }
 
-class UpdateGoalsPage extends StatelessWidget {
+class UpdateGoalsPage extends StatefulWidget {
   const UpdateGoalsPage({super.key});
+
+  @override
+  _UpdateGoalsPageState createState() => _UpdateGoalsPageState();
+}
+
+class _UpdateGoalsPageState extends State<UpdateGoalsPage> {
+  final TextEditingController _weightController = TextEditingController();
+  final TextEditingController _calorieController = TextEditingController();
+  final TextEditingController _sleepController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _weightController.text = _SpecificGoalSettingPageState.savedWeight ?? "";
+    _calorieController.text = _SpecificGoalSettingPageState.savedCalories ?? "";
+    _sleepController.text = _SpecificGoalSettingPageState.savedSleep ?? "";
+  }
+
+  void updateGoals() {
+    setState(() {
+      _SpecificGoalSettingPageState.savedWeight = _weightController.text;
+      _SpecificGoalSettingPageState.savedCalories = _calorieController.text;
+      _SpecificGoalSettingPageState.savedSleep = _sleepController.text;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -264,28 +360,34 @@ class UpdateGoalsPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildGoalOption(context, "Update Daily Goal", Icons.today, Colors.orange),
-            buildGoalOption(context, "Update Weekly Goal", Icons.calendar_view_week, Colors.green),
-            buildGoalOption(context, "Update Monthly Goal", Icons.calendar_today, Colors.blue),
+            const Text("Update Your Goals", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _weightController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: "Weight (kg)", border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _calorieController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: "Daily Calorie Intake", border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _sleepController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: "Sleep Hours", border: OutlineInputBorder()),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: updateGoals,
+              child: const Text("Update Goals"),
+            ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget buildGoalOption(BuildContext context, String title, IconData icon, Color color) {
-    return Card(
-      elevation: 5,
-      margin: const EdgeInsets.only(bottom: 15),
-      child: ListTile(
-        leading: Icon(icon, color: color),
-        title: Text(title, style: const TextStyle(fontSize: 18)),
-        onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("$title clicked!")),
-          );
-        },
       ),
     );
   }
