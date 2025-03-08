@@ -46,9 +46,9 @@ class HomeLandingPage extends StatelessWidget {
                 bottomRight: Radius.circular(30),
               ),
             ),
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   "Welcome Back!",
                   style: TextStyle(

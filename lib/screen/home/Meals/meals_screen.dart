@@ -278,11 +278,11 @@ class _MealsScreenState extends State<MealsScreen> {
         "Nutrient Breakdown",
         Icons.info,
         "View breakdown of nutrients.",
-        Column(
+        const Column(
           children: [
-            Text("Carbs: 250g", style: const TextStyle(fontSize: 16)),
-            Text("Proteins: 150g", style: const TextStyle(fontSize: 16)),
-            Text("Fats: 70g", style: const TextStyle(fontSize: 16)),
+            Text("Carbs: 250g", style: TextStyle(fontSize: 16)),
+            Text("Proteins: 150g", style: TextStyle(fontSize: 16)),
+            Text("Fats: 70g", style: TextStyle(fontSize: 16)),
           ],
         ),
         _pageColors[1]!,
@@ -293,9 +293,9 @@ class _MealsScreenState extends State<MealsScreen> {
         "Save your favorite meals as templates.",
         Column(
           children: [
-            Text("1. Chicken Stir Fry", style: const TextStyle(fontSize: 16)),
-            Text("2. Veggie Wrap", style: const TextStyle(fontSize: 16)),
-            Text("3. Smoothie Bowl", style: const TextStyle(fontSize: 16)),
+            const Text("1. Chicken Stir Fry", style: TextStyle(fontSize: 16)),
+            const Text("2. Veggie Wrap", style: TextStyle(fontSize: 16)),
+            const Text("3. Smoothie Bowl", style: TextStyle(fontSize: 16)),
             const SizedBox(height: 10),
             ElevatedButton(onPressed: () {}, child: const Text("Save Current Meal as Template")),
           ],
@@ -308,9 +308,9 @@ class _MealsScreenState extends State<MealsScreen> {
         "View and customize your daily meal plan.",
         Column(
           children: [
-            Text("Breakfast: Oatmeal with Fruits", style: const TextStyle(fontSize: 16)),
-            Text("Lunch: Grilled Chicken Salad", style: const TextStyle(fontSize: 16)),
-            Text("Dinner: Quinoa and Vegetables", style: const TextStyle(fontSize: 16)),
+            const Text("Breakfast: Oatmeal with Fruits", style: TextStyle(fontSize: 16)),
+            const Text("Lunch: Grilled Chicken Salad", style: TextStyle(fontSize: 16)),
+            const Text("Dinner: Quinoa and Vegetables", style: TextStyle(fontSize: 16)),
             const SizedBox(height: 10),
             ElevatedButton(onPressed: () {}, child: const Text("Customize Meal Plan")),
           ],
@@ -321,11 +321,11 @@ class _MealsScreenState extends State<MealsScreen> {
         "Healthy Snack Options",
         Icons.local_pizza,
         "Get healthier snack recommendations.",
-        Column(
+        const Column(
           children: [
-            Text("1. Greek Yogurt with Honey", style: const TextStyle(fontSize: 16)),
-            Text("2. Hummus with Veggies", style: const TextStyle(fontSize: 16)),
-            Text("3. Mixed Nuts", style: const TextStyle(fontSize: 16)),
+            Text("1. Greek Yogurt with Honey", style: TextStyle(fontSize: 16)),
+            Text("2. Hummus with Veggies", style: TextStyle(fontSize: 16)),
+            Text("3. Mixed Nuts", style: TextStyle(fontSize: 16)),
           ],
         ),
         _pageColors[4]!,
@@ -334,10 +334,10 @@ class _MealsScreenState extends State<MealsScreen> {
         "Nutritional Comparisons",
         Icons.compare_arrows,
         "Compare nutritional values of foods.",
-        Column(
+        const Column(
           children: [
-            Text("Chips: 150 kcal, 10g fat", style: const TextStyle(fontSize: 16)),
-            Text("Veggie Sticks: 50 kcal, 0g fat", style: const TextStyle(fontSize: 16)),
+            Text("Chips: 150 kcal, 10g fat", style: TextStyle(fontSize: 16)),
+            Text("Veggie Sticks: 50 kcal, 0g fat", style: TextStyle(fontSize: 16)),
           ],
         ),
         _pageColors[5]!,
@@ -346,10 +346,10 @@ class _MealsScreenState extends State<MealsScreen> {
         "Micronutrient Deficiencies",
         Icons.warning,
         "Highlight deficiencies and suggest adjustments.",
-        Column(
+        const Column(
           children: [
-            Text("Deficiency in Vitamin D:", style: const TextStyle(fontSize: 16)),
-            Text("Consider adding more fatty fish or fortified foods.", style: const TextStyle(fontSize: 16)),
+            Text("Deficiency in Vitamin D:", style: TextStyle(fontSize: 16)),
+            Text("Consider adding more fatty fish or fortified foods.", style: TextStyle(fontSize: 16)),
           ],
         ),
         _pageColors[1]!,
@@ -433,11 +433,11 @@ class CustomBottomNavBar extends StatelessWidget {
   final ScrollController scrollController;
 
   const CustomBottomNavBar({
-    Key? key,
+    super.key,
     required this.selectedIndex,
     required this.onItemTapped,
     required this.scrollController,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

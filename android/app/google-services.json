@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "640263201869",
+    "project_id": "fitness4all-11abb",
+    "storage_bucket": "fitness4all-11abb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:640263201869:android:3eeeb3cd01626309546804",
+        "android_client_info": {
+          "package_name": "com.example.fitness4all"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "640263201869-1kmrvcm64eclrh2m39e16d0ddemccmu0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDK7pQ767hXJNM1XN5b95JTJzd53RX4Mvs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "640263201869-1kmrvcm64eclrh2m39e16d0ddemccmu0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

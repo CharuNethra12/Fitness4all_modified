@@ -4,8 +4,8 @@ class TColor {
   // Use full 8-digit hex values (including alpha channel)
   static Color get primary => const Color(0xFF3399FF);
   static Color get secondary => const Color(0xFF3399FF);
-  static  Color primaryColor = Color(0xff156C78);
-  static  Color secondaryColor = Color(0xffFB784E);
+  static  Color primaryColor = const Color(0xff156C78);
+  static  Color secondaryColor = const Color(0xffFB784E);
 
   // Blue
   static Color get primaryText => const Color(0xff0C0B0B); // Black

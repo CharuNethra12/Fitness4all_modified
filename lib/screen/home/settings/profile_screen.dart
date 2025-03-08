@@ -1,7 +1,17 @@
-import 'package:fitness4all/common/color_extensions.dart';
-import 'package:flutter/material.dart';
-import 'package:fitness4all/screen/home/settings/setting_row.dart';
+// ignore_for_file: use_build_context_synchronously
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:fitness4all/screen/home/settings/settings_screen.dart';
+import 'package:fitness4all/screen/login/login_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'dart:io';
+
+import 'package:fitness4all/common/color_extensions.dart';
+import 'package:fitness4all/screen/home/settings/setting_row.dart';
+import 'package:fitness4all/screen/home/settings/theme_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -11,28 +21,71 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final User? user = FirebaseAuth.instance.currentUser;
+  String displayName = "User Name";
+  String email = "example@gmail.com";
+  String photoURL = "assets/img/default_profile.png";
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserDetails();
+  }
+
+  void fetchUserDetails() {
+    if (user != null) {
+      setState(() {
+        displayName = user!.displayName ?? "User Name";
+        email = user!.email ?? "example@gmail.com";
+        photoURL = user!.photoURL?.isNotEmpty == true ? user!.photoURL! : "assets/img/default_profile.png";
+      });
+    }
+  }
+
+  Future<void> uploadProfilePicture() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image == null) return;
+
+    File file = File(image.path);
+    try {
+      final storageRef = FirebaseStorage.instance.ref().child("profile_pics/${user?.uid}.jpg");
+      await storageRef.putFile(file);
+      String downloadURL = await storageRef.getDownloadURL();
+
+      await user?.updatePhotoURL(downloadURL);
+      fetchUserDetails(); // Update UI with new image
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
+    }
+  }
+
+  Future<void> logout() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
-        centerTitle: false,
-        leading: IconButton(
+        title: const Text("Profile"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
             onPressed: () {
-              context.pop();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingScreen()),
+              );
             },
-            icon: Image.asset(
-              "assets/img/back.png",
-              width: 18,
-              height: 18,
-            )),
-        title: Text(
-          "Profile",
-          style: TextStyle(
-            color: TColor.primaryText,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
           ),
-        ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -40,110 +93,83 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Padding(
             padding: const EdgeInsets.only(bottom: 15),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: Image.asset(
-                    "assets/img/Andrew_photo.jpg",
-                    width: 100,
-                    height: 100,
-                  ),
+                  child: photoURL.startsWith("http")
+                      ? Image.network(photoURL, width: 100, height: 100, fit: BoxFit.cover)
+                      : Image.asset(
+                          photoURL,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Image.asset(
+                            "assets/img/default_profile.png",
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                 ),
-                const SizedBox(
-                  width: 20,
-                ),
+                const SizedBox(width: 20),
                 Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Andrew Tate",
-                          style: TextStyle(
-                            color: TColor.primaryText,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        displayName,
+                        style: TextStyle(
+                          color: TColor.primaryText,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
                         ),
-                        const SizedBox(
-                          height: 4,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        email,
+                        style: TextStyle(
+                          color: TColor.primaryText,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
                         ),
-                        Text(
-                          "123456789",
-                          style: TextStyle(
-                            color: TColor.primaryText,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        Text(
-                          "AndrewTate@gmail.com",
-                          style: TextStyle(color: TColor.primaryText, fontSize: 12),
-                        ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Image.asset(
-                              "assets/img/location.png",
-                              width: 12,
-                              height: 12,
-                            ),
-                            const SizedBox(
-                              width: 12,
-                            ),
-                            Text(
-                              "Romania",
-                              style: TextStyle(
-                                  color: TColor.primaryText, fontSize: 12),
-                            ),
-                          ],
-                        )
-                      ],
-                    ))
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                      const SizedBox(height: 8),
+                      ElevatedButton(
+                        onPressed: uploadProfilePicture,
+                        child: const Text("Upload Profile Picture"),
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
           ),
+          const Divider(), // Adds separation
           SettingRow(
-              title: "Complete Task",
-              icon: "assets/img/completed_tasks.png",
-              value: "3",
-              onPressed: () {}),
+            title: "Dark Mode",
+            icon: "assets/img/dark_mode.png",
+            value: "",
+            trailingWidget: Switch(
+              value: themeProvider.isDarkMode,
+              onChanged: (value) {
+                themeProvider.toggleTheme();
+              },
+            ),
+            onPressed: () {
+              themeProvider.toggleTheme();
+            },
+          ),
           SettingRow(
-              title: "Level",
-              icon: "assets/img/level.png",
-              value: "Beginner",
-              onPressed: () {}),
-          SettingRow(
-              title: "Goals",
-              icon: "assets/img/goal.png",
-              value: "Mass Gain",
-              onPressed: () {}),
-          SettingRow(
-              title: "Challenges",
-              icon: "assets/img/challenges.png",
-              value: "4",
-              onPressed: () {}),
-          SettingRow(
-              title: "Plans",
-              icon: "assets/img/calendar.png",
-              value: "2",
-              onPressed: () {}),
-          SettingRow(
-              title: "Fitness Device",
-              icon: "assets/img/smartwatch.png",
-              value: "Mi",
-              onPressed: () {}),
-          SettingRow(
-              title: "Refer a Friend",
-              icon: "assets/img/share.png",
-              value: "",
-              onPressed: () {}),
-
+            title: "Logout",
+            icon: "assets/img/logout.png",
+            value: "",
+            onPressed: logout,
+          ),
         ],
       ),
     );

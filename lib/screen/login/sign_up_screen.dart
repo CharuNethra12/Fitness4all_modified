@@ -1,7 +1,10 @@
-import 'package:fitness4all/common/color_extensions.dart';
-import 'package:fitness4all/common_widgets/round_button.dart';
-import 'package:fitness4all/screen/login/mobile_number_screen.dart';
+// ignore_for_file: use_build_context_synchronously
+import 'package:fitness4all/screen/home/Main_home/home_screen.dart';
+import 'package:fitness4all/screen/login/login_screen.dart';
+import 'package:fitness4all/screen/login/select_age_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -11,102 +14,104 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool isLoading = false;
+
+  // Function to Register User
+  Future<void> signUp() async {
+    // Check if fields are empty
+    if (emailController.text.trim().isEmpty || passwordController.text.trim().isEmpty) {
+      showError("Email and password cannot be empty");
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      // Navigate to SelectAgeScreen after signup
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SelectAgeScreen(userId: userCredential.user!.uid),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      showError(e.message ?? "Signup failed");
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+  // Function to Save Age in Firebase Firestore
+  Future<void> saveUserAge(int age, String userId) async {
+    await FirebaseFirestore.instance.collection('users').doc(userId).set({
+      'age': age,
+    }, SetOptions(merge: true));
+
+    // Navigate to Home Screen after saving age
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
+    );
+  }
+
+  // Show Error Message
+  void showError(String message) {
+    setState(() {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: Colors.red),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Spacer(),
-            Image.asset(
-              "assets/img/app_logo.jpg",
-              width: context.width * 0.7,
+            const Text(
+              "Sign Up for Fitness4All",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(
-              height: 100,
+            const SizedBox(height: 20),
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(labelText: "Email"),
+              keyboardType: TextInputType.emailAddress,
             ),
-            RoundButton(
-                title: "Mobile Number",
-                type: RoundButtonType.line,
-                isPadding: false,
-                image: "assets/img/phone.png",
-                fontWeight: FontWeight.normal,
-                onPressed: () {
-                  context.push(const MobileNumberScreen());
-                }),
-            const SizedBox(
-              height: 30,
+            const SizedBox(height: 10),
+            TextField(
+              controller: passwordController,
+              decoration: const InputDecoration(labelText: "Password"),
+              obscureText: true,
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(18),
-                    onTap: () {},
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      height: 36,
-                      decoration: BoxDecoration(
-                          color: const Color(0xff3A91F7),
-                          borderRadius: BorderRadius.circular(18)),
-                      child: Row(
-                        children: [
-                          Image.asset(
-                            "assets/img/fb_logo.png",
-                            width: 12,
-                            height: 12,
-                          ),
-                          const Expanded(
-                            child: Text(
-                              "Facebook",
-                              textAlign: TextAlign.center,
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 12),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+            const SizedBox(height: 20),
+            isLoading
+                ? const CircularProgressIndicator()
+                : ElevatedButton(
+                    onPressed: signUp,
+                    child: const Text("Create Account"),
                   ),
-                ),
-                const SizedBox(
-                  width: 30,
-                ),
-                Expanded(
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(18),
-                    onTap: () {},
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      height: 36,
-                      decoration: BoxDecoration(
-                          color: TColor.txtBG,
-                          border: Border.all(color: TColor.board, width: 1),
-                          borderRadius: BorderRadius.circular(18)),
-                      child: Row(
-                        children: [
-                          Image.asset(
-                            "assets/img/google_logo.png",
-                            width: 12,
-                            height: 12,
-                          ),
-                          Expanded(
-                            child: Text(
-                              "Google",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: TColor.primaryText, fontSize: 12),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-              ],
+            const SizedBox(height: 10),
+            TextButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                );
+              },
+              child: const Text("Already have an account? Log in"),
             ),
-            const Spacer(),
           ],
         ),
       ),

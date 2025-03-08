@@ -1,10 +1,13 @@
+import 'package:fitness4all/screen/home/settings/theme_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:fitness4all/common/color_extensions.dart';
 import 'package:fitness4all/screen/home/Meals/meals_screen.dart';
 import 'package:fitness4all/screen/home/notification/notification_screen.dart';
 import 'package:fitness4all/screen/home/reminder/reminder_screen.dart';
-import 'package:flutter/material.dart';
 import 'package:fitness4all/screen/home/settings/setting_row.dart';
 import 'package:fitness4all/screen/home/settings/profile_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -14,6 +17,28 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
+  final User? user = FirebaseAuth.instance.currentUser;
+  String photoURL = "assets/img/default_profile.png"; // Default profile picture
+
+  @override
+  void initState() {
+    super.initState();
+    loadProfileImage();
+  }
+
+  void loadProfileImage() {
+    setState(() {
+      if (user?.photoURL != null && user!.photoURL!.isNotEmpty) {
+        photoURL = user!.photoURL!;
+      }
+    });
+  }
+
+  Future<void> logout() async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +56,7 @@ class _SettingScreenState extends State<SettingScreen> {
           ),
         ),
         title: const Text(
-          "Setting",
+          "Settings",
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,
@@ -42,66 +67,113 @@ class _SettingScreenState extends State<SettingScreen> {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         children: [
+          // Profile Section
           SettingRow(
-              title: "Profile",
-              icon: "assets/img/Andrew_photo.jpg",
-              isIconCircle: true,
-              onPressed: () {
-                context.push(const ProfileScreen());
-              }),
+            title: "Profile",
+            icon: photoURL,
+            isIconCircle: true,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              );
+            },
+          ),
           SettingRow(
-              title: "Language options",
-              icon: "assets/img/language.png",
-              value: "Eng",
-              onPressed: () {}),
+            title: "Language options",
+            icon: "assets/img/language.png",
+            value: "Eng",
+            onPressed: () {},
+          ),
           SettingRow(
-              title: "Health Data",
-              icon: "assets/img/data.png",
-              value: "",
-              onPressed: () {}),
+            title: "Health Data",
+            icon: "assets/img/data.png",
+            value: "",
+            onPressed: () {},
+          ),
           SettingRow(
-              title: "Notification",
-              icon: "assets/img/notification.png",
-              value: "On",
-              onPressed: () {
-                context.push(const NotificationScreen());
-              }),
+            title: "Notification",
+            icon: "assets/img/notification.png",
+            value: "On",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NotificationScreen()),
+              );
+            },
+          ),
           SettingRow(
-              title: "Meals Logger",
-              icon: "assets/img/Meal_logger.png",
-              value: "",
-              onPressed: () {
-                context.push(const MealsScreen());
-              }),
+            title: "Meals Logger",
+            icon: "assets/img/Meal_logger.png",
+            value: "",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MealsScreen()),
+              );
+            },
+          ),
           SettingRow(
-              title: "Refer a Friend",
-              icon: "assets/img/share.png",
-              value: "",
-              onPressed: () {}),
+            title: "Refer a Friend",
+            icon: "assets/img/share.png",
+            value: "",
+            onPressed: () {},
+          ),
           SettingRow(
-              title: "Feedback",
-              icon: "assets/img/feedback.png",
-              value: "",
-              onPressed: () {}),
+            title: "Feedback",
+            icon: "assets/img/feedback.png",
+            value: "",
+            onPressed: () {},
+          ),
           SettingRow(
-              title: "Rate Us",
-              icon: "assets/img/rating.png",
-              value: "",
-              onPressed: () {}),
+            title: "Rate Us",
+            icon: "assets/img/rating.png",
+            value: "",
+            onPressed: () {},
+          ),
           SettingRow(
-              title: "Reminder",
-              icon: "assets/img/reminder.png",
-              value: "",
-              onPressed: () {
-                context.push(const ReminderScreen());
-              }),
+            title: "Reminder",
+            icon: "assets/img/reminder.png",
+            value: "",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ReminderScreen()),
+              );
+            },
+          ),
+
+          // Dark Mode Toggle
+          Consumer<ThemeProvider>(
+            builder: (context, themeProvider, child) {
+              return SettingRow(
+                title: "Dark Mode",
+                icon: "assets/img/dark_mode.png",
+                value: "",
+                trailingWidget: Switch(
+                  value: themeProvider.isDarkMode,
+                  onChanged: (value) {
+                    themeProvider.toggleTheme();
+                  },
+                ),
+                onPressed: () {
+                  themeProvider.toggleTheme();
+                },
+              );
+            },
+          ),
+
+          // Logout Button
           SettingRow(
-              title: "Log Out",
-              icon: "assets/img/logout.png",
-              value: "",
-              onPressed: () {}),
+            title: "Log Out",
+            icon: "assets/img/logout.png",
+            value: "",
+            onPressed: logout,
+          ),
         ],
       ),
     );
   }
 }
+
+

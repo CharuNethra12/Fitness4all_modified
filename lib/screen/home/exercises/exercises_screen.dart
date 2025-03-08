@@ -246,9 +246,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
         "Save your favorite exercises as templates.",
         Column(
           children: [
-            Text("1. Push-ups", style: const TextStyle(fontSize: 16)),
-            Text("2. Squats", style: const TextStyle(fontSize: 16)),
-            Text("3. Plank", style: const TextStyle(fontSize: 16)),
+            const Text("1. Push-ups", style: TextStyle(fontSize: 16)),
+            const Text("2. Squats", style: TextStyle(fontSize: 16)),
+            const Text("3. Plank", style: TextStyle(fontSize: 16)),
             const SizedBox(height: 10),
             ElevatedButton(onPressed: () {}, child: const Text("Save Current Exercise as Template")),
           ],
@@ -261,9 +261,9 @@ class _ExerciseScreenState extends State<ExerciseScreen> {
         "View and customize your daily exercise plan.",
         Column(
           children: [
-            Text("Morning: Jogging", style: const TextStyle(fontSize: 16)),
-            Text("Afternoon: Weightlifting", style: const TextStyle(fontSize: 16)),
-            Text("Evening: Yoga", style: const TextStyle(fontSize: 16)),
+            const Text("Morning: Jogging", style: TextStyle(fontSize: 16)),
+            const Text("Afternoon: Weightlifting", style: TextStyle(fontSize: 16)),
+            const Text("Evening: Yoga", style: TextStyle(fontSize: 16)),
             const SizedBox(height: 10),
             ElevatedButton(onPressed: () {}, child: const Text("Customize Plan")),
           ],
@@ -345,11 +345,11 @@ class CustomBottomNavBar extends StatelessWidget {
   final ScrollController scrollController;
 
   const CustomBottomNavBar({
-    Key? key,
+    super.key,
     required this.selectedIndex,
     required this.onItemTapped,
     required this.scrollController,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
