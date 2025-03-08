@@ -1,16 +1,10 @@
-import 'package:fitness4all/common/color_extensions.dart';
-import 'package:fitness4all/common_widgets/round_button.dart';
-import 'package:fitness4all/common_widgets/round_title_value_button.dart';
-import 'package:fitness4all/screen/home/Main_home/home_screen.dart';
-import 'package:fitness4all/screen/home/top_tab_view/top_tab_view_screen.dart';
-import 'package:fitness4all/screen/login/select_age_screen.dart';
-import 'package:fitness4all/screen/login/select_height_screen.dart';
-import 'package:fitness4all/screen/login/select_level_screen.dart';
-import 'package:fitness4all/screen/login/select_weight_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fitness4all/screen/home/Main_home/home_screen.dart';
 
 class PhysiqueScreen extends StatefulWidget {
-  const PhysiqueScreen({super.key});
+  final String userId;
+  const PhysiqueScreen({super.key, required this.userId});
 
   @override
   State<PhysiqueScreen> createState() => _PhysiqueScreenState();
@@ -22,6 +16,22 @@ class _PhysiqueScreenState extends State<PhysiqueScreen> {
   String selectWeight = "78 KG";
   String selectLevel = "Beginner";
 
+  // Save Physique Data in Firestore
+  Future<void> savePhysiqueData() async {
+    await FirebaseFirestore.instance.collection('users').doc(widget.userId).set({
+      'age': selectAge,
+      'height': selectHeight,
+      'weight': selectWeight,
+      'fitness_level': selectLevel,
+    }, SetOptions(merge: true));
+
+    // Navigate to HomeScreen
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,95 +40,45 @@ class _PhysiqueScreenState extends State<PhysiqueScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 45),
           child: Column(
             children: [
-              const SizedBox(
-                height: 20,
-              ),
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 "Enter Your Physique",
-                style: TextStyle(
-                  color: TColor.primaryText,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
               ),
-              const SizedBox(
-                height: 40,
+              const SizedBox(height: 40),
+              ListTile(
+                title: const Text("Age"),
+                subtitle: Text("$selectAge Yrs"),
+                onTap: () {
+                  // Show age selection modal
+                },
               ),
-              RoundTitleValueButton(
-                  title: "Age",
-                  value: "$selectAge Yrs",
-                  onPressed: () {
-                    showModalBottomSheet(
-                        backgroundColor: Colors.transparent,
-                        elevation: 0,
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (context) {
-                          return SelectAgeScreen(didChange: (val) {
-                            setState(() {
-                              selectAge = val;
-                            });
-                          });
-                        });
-                  }),
-              RoundTitleValueButton(
-                  title: "Height",
-                  value: selectHeight,
-                  onPressed: () {
-                    showModalBottomSheet(
-                        backgroundColor: Colors.transparent,
-                        elevation: 0,
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (context) {
-                          return SelectHeightScreen(didChange: (val) {
-                            setState(() {
-                              selectHeight = "${val["ft"]} ${val["inch"]}";
-                            });
-                          });
-                        });
-                  }),
-              RoundTitleValueButton(
-                  title: "Weight",
-                  value: selectWeight,
-                  onPressed: () {
-                    showModalBottomSheet(
-                        backgroundColor: Colors.transparent,
-                        elevation: 0,
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (context) {
-                          return SelectWeightScreen(didChange: (val) {
-                            setState(() {
-                              selectWeight = val;
-                            });
-                          });
-                        });
-                  }),
-              RoundTitleValueButton(
-                  title: "Level",
-                  value: selectLevel,
-                  onPressed: () {
-                    showModalBottomSheet(
-                        backgroundColor: Colors.transparent,
-                        elevation: 0,
-                        isScrollControlled: true,
-                        context: context,
-                        builder: (context) {
-                          return SelectLevelScreen(didChange: (val) {
-                            setState(() {
-                              selectLevel = val;
-                            });
-                          });
-                        });
-                  }),
-              const SizedBox(
-                height: 40,
+              ListTile(
+                title: const Text("Height"),
+                subtitle: Text(selectHeight),
+                onTap: () {
+                  // Show height selection modal
+                },
               ),
-
-              RoundButton(title: "Confirm Detail", isPadding: false, onPressed: (){
-                context.push( HomeScreen() );
-              })
+              ListTile(
+                title: const Text("Weight"),
+                subtitle: Text(selectWeight),
+                onTap: () {
+                  // Show weight selection modal
+                },
+              ),
+              ListTile(
+                title: const Text("Fitness Level"),
+                subtitle: Text(selectLevel),
+                onTap: () {
+                  // Show fitness level selection modal
+                },
+              ),
+              const SizedBox(height: 40),
+              ElevatedButton(
+                onPressed: savePhysiqueData,
+                child: const Text("Confirm & Proceed"),
+              ),
             ],
           ),
         ),

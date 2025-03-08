@@ -52,10 +52,10 @@ class _OTPScreenState extends State<OTPScreen> {
                   color: TColor.primaryText,
                 ),
                 onChanged: (pin) {
-                  print("Changed: " + pin);
+                  print("Changed: $pin");
                 },
                 onCompleted: (pin) {
-                  print("Completed: " + pin);
+                  print("Completed: $pin");
                 },
               ),
               const SizedBox(

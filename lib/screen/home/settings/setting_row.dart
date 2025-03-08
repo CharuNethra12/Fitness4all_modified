@@ -1,13 +1,13 @@
 import 'package:fitness4all/common/color_extensions.dart';
 import 'package:flutter/material.dart';
 
-
 class SettingRow extends StatelessWidget {
   final String title;
   final String icon;
   final String value;
   final bool isIconCircle;
   final VoidCallback onPressed;
+  final Widget? trailingWidget; // ✅ Ensure this is included
 
   const SettingRow({
     super.key,
@@ -16,6 +16,7 @@ class SettingRow extends StatelessWidget {
     this.value = "",
     this.isIconCircle = false,
     required this.onPressed,
+    this.trailingWidget, // ✅ Ensure this is included in the constructor
   });
 
   @override
@@ -41,9 +42,7 @@ class SettingRow extends StatelessWidget {
                 height: 22,
               ),
             ),
-            const SizedBox(
-              width: 20,
-            ),
+            const SizedBox(width: 20),
             Expanded(
               child: Text(
                 title,
@@ -54,22 +53,21 @@ class SettingRow extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(
-              width: 8,
-            ),
-            Text(
-              value,
-              style: TextStyle(
-                color: TColor.primaryText,
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
+            const SizedBox(width: 8),
+            if (trailingWidget != null) // ✅ Include trailingWidget if provided
+              trailingWidget!
+            else
+              Text(
+                value,
+                style: TextStyle(
+                  color: TColor.primaryText,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
           ],
         ),
       ),
     );
   }
 }
-
-

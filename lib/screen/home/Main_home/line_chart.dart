@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class MyLineChart extends StatefulWidget {
+  const MyLineChart({super.key});
+
   @override
   _MyLineChartState createState() => _MyLineChartState();
 }
@@ -31,7 +33,7 @@ class _MyLineChartState extends State<MyLineChart> {
 
   LineChartData mainData() {
     return LineChartData(
-      gridData: FlGridData(show: false),
+      gridData: const FlGridData(show: false),
       titlesData: FlTitlesData(
         show: true,
         bottomTitles: AxisTitles(
@@ -41,29 +43,29 @@ class _MyLineChartState extends State<MyLineChart> {
             getTitlesWidget: (value, meta) {
               switch (value.toInt()) {
                 case 2:
-                  return Text('1 km', style: TextStyle(fontSize: 16.0, color: Colors.black87));
+                  return const Text('1 km', style: TextStyle(fontSize: 16.0, color: Colors.black87));
                 case 4:
-                  return Text('2 km', style: TextStyle(fontSize: 16.0, color: Colors.black87));
+                  return const Text('2 km', style: TextStyle(fontSize: 16.0, color: Colors.black87));
                 case 6:
-                  return Text('3 km', style: TextStyle(fontSize: 16.0, color: Colors.black87));
+                  return const Text('3 km', style: TextStyle(fontSize: 16.0, color: Colors.black87));
                 case 8:
-                  return Text('4 km', style: TextStyle(fontSize: 16.0, color: Colors.black87));
+                  return const Text('4 km', style: TextStyle(fontSize: 16.0, color: Colors.black87));
                 case 10:
-                  return Text('5 km', style: TextStyle(fontSize: 16.0, color: Colors.black87));
+                  return const Text('5 km', style: TextStyle(fontSize: 16.0, color: Colors.black87));
                 default:
-                  return SizedBox();
+                  return const SizedBox();
               }
             },
             interval: 2,
           ),
         ),
-        leftTitles: AxisTitles(
+        leftTitles: const AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
-        topTitles: AxisTitles(
+        topTitles: const AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
-        rightTitles: AxisTitles(
+        rightTitles: const AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
       ),
@@ -75,13 +77,13 @@ class _MyLineChartState extends State<MyLineChart> {
       lineBarsData: [
         LineChartBarData(
           spots: [
-            FlSpot(0, 3),
-            FlSpot(2, 2),
-            FlSpot(4, 5),
-            FlSpot(6, 3.1),
-            FlSpot(8, 4),
-            FlSpot(10, 3),
-            FlSpot(12, 7),
+            const FlSpot(0, 3),
+            const FlSpot(2, 2),
+            const FlSpot(4, 5),
+            const FlSpot(6, 3.1),
+            const FlSpot(8, 4),
+            const FlSpot(10, 3),
+            const FlSpot(12, 7),
           ],
           isCurved: true,
           gradient: LinearGradient(
@@ -89,7 +91,7 @@ class _MyLineChartState extends State<MyLineChart> {
           ),
           barWidth: 5,
           isStrokeCapRound: false,
-          dotData: FlDotData(show: false),
+          dotData: const FlDotData(show: false),
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(

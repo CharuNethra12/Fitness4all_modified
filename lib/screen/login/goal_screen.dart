@@ -1,66 +1,91 @@
-import 'package:fitness4all/common/color_extensions.dart';
-import 'package:fitness4all/common_widgets/round_button.dart';
-import 'package:fitness4all/screen/login/physique_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'physique_screen.dart';
 
 class GoalScreen extends StatefulWidget {
-  const GoalScreen({super.key});
+  final String userId;
+  const GoalScreen({super.key, required this.userId});
 
   @override
   State<GoalScreen> createState() => _GoalScreenState();
 }
 
 class _GoalScreenState extends State<GoalScreen> {
+  String selectedGoal = "Fat Loss"; // Default selection
 
-  String selectName = "";
+  // Save Goal in Firestore
+  Future<void> saveUserGoal(String goal) async {
+    await FirebaseFirestore.instance.collection('users').doc(widget.userId).set({
+      'fitness_goal': goal,
+    }, SetOptions(merge: true));
+
+    // Navigate to PhysiqueScreen
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PhysiqueScreen(userId: widget.userId),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
+      backgroundColor: Colors.black45,
+      body: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.7,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(
-                height: 30,
-              ),
-              Text(
+              const Text(
                 "Select Your Goal",
-                style: TextStyle(
-                  color: TColor.primaryText,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(
-                height: 20,
+              const SizedBox(height: 25),
+              RadioListTile(
+                title: const Text("Fat Loss"),
+                value: "Fat Loss",
+                groupValue: selectedGoal,
+                onChanged: (value) {
+                  setState(() {
+                    selectedGoal = value.toString();
+                  });
+                },
               ),
-              Column(
-                children: ["Fat Loss", "Weight Gain", "Muscle Gain", "Others"]
-                    .map((name) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: RoundSelectButton(title: name, type: RoundButtonType.line, isPadding: false,
-                        image: selectName == name ? "assets/img/radio_select.png" : "assets/img/radio_unselect.png" ,
-                        onPressed: (){
-
-                          setState(() {
-                            selectName = name;
-                          });
-
-                        }),
-                  );
-                }).toList(),
+              RadioListTile(
+                title: const Text("Weight Gain"),
+                value: "Weight Gain",
+                groupValue: selectedGoal,
+                onChanged: (value) {
+                  setState(() {
+                    selectedGoal = value.toString();
+                  });
+                },
               ),
-              const SizedBox(
-                height: 20,
+              RadioListTile(
+                title: const Text("Muscle Gain"),
+                value: "Muscle Gain",
+                groupValue: selectedGoal,
+                onChanged: (value) {
+                  setState(() {
+                    selectedGoal = value.toString();
+                  });
+                },
               ),
-              RoundButton(title: "DONE", isPadding: false, onPressed: () {
-                context.push(const PhysiqueScreen());
-              }),
-              const Spacer()
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  saveUserGoal(selectedGoal);
+                },
+                child: const Text("Next"),
+              ),
             ],
           ),
         ),
